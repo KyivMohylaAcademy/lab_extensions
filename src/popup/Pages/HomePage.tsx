@@ -15,7 +15,6 @@ const  HomePage: React.FC = () => {
             const balance = await connection.getBalance(address) / LAMPORTS_PER_SOL
             setAddress(address.toBase58())
             setBalance(balance)
-            console.log(PublicKey.isOnCurve(address))
         }catch (e){
             console.log(e)
             alert("The public key isn't correct!")
