@@ -26,18 +26,34 @@ const HomePage: React.FC = () => {
         alert('Public key copied!');
     };
 
+    const shortenPublicKey = (key: string) => {
+        return `${key.slice(0, 6)}...${key.slice(-6)}`;
+    };
+
     return (
-        <div className="bg-gray-200 flex flex-col items-center justify-center border border-gray-400 p-4">
+        <div className="bg-gray-100 flex flex-col items-center justify-start p-4">
             <h1 className="text-xl font-bold mb-4">Home Page</h1>
-            {publicKey && (
-                <>
-                    <p className="text-lg font-mono">Public Key: {publicKey}</p>
-                    <button onClick={copyKey} className="bg-gray-500 text-white p-2 rounded mt-2">Copy Key</button>
-                    {balance !== null && (
-                        <p className="text-lg font-mono mt-2">Balance: {balance} SOL</p>
-                    )}
-                </>
-            )}
+            <div className="flex flex-col items-center mt-8">
+                <div className="w-40 h-40 bg-gray-500 rounded-full"></div>
+                
+                {publicKey && (
+                    <>
+                        <p className="text-lg font-bold mt-4">Account</p>
+                        <p 
+                            className="text-sm text-gray-600 underline cursor-pointer"
+                            onClick={copyKey}
+                        >
+                            {shortenPublicKey(publicKey)}
+                        </p>
+                    </>
+                )}
+
+                {balance !== null && (
+                    <p className="text-4xl font-bold text-blue-600 mt-4">
+                        {balance.toFixed(5)} SOL
+                    </p>
+                )}
+            </div>
         </div>
     );
 };

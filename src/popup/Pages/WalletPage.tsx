@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
-import {PublicKey } from '@solana/web3.js';
+import React, { useEffect, useState } from 'react';
+import { PublicKey } from '@solana/web3.js';
 
 const WalletPage: React.FC = () => {
-    const [publicKey, setPublicKey] = useState('');
+    const [publicKey, setPublicKey] = useState(localStorage.getItem('publicKey') || '');
     const [address, setAddress] = useState('');
+    const [message, setMessage] = useState('');
+
+    useEffect(() => {
+        if (publicKey) {
+            setAddress(publicKey);
+        }
+    }, [publicKey]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPublicKey(e.target.value);
@@ -12,11 +19,12 @@ const WalletPage: React.FC = () => {
     const connectWallet = () => {
         try {
             const key = new PublicKey(publicKey);
-            localStorage.setItem('publicKey', key.toBase58());
-            setAddress(key.toBase58());
-            alert('Wallet connected!');
+            const base58Key = key.toBase58();
+            localStorage.setItem('publicKey', base58Key);
+            setAddress(base58Key);
+            setMessage('Wallet connected successfully!');
         } catch (error) {
-            alert('Invalid public key');
+            setMessage('Invalid public key. Please enter a valid key.');
         }
     };
 
@@ -32,11 +40,15 @@ const WalletPage: React.FC = () => {
             />
             <button
                 onClick={connectWallet}
-                className="bg-blue-500 text-white p-2 rounded"
+                className="bg-blue-500 text-white p-2 rounded mb-4"
             >
                 Connect
             </button>
-            {address && <p className="text-lg font-mono mt-4">Connected Address: {address}</p>}
+            {message && (
+                <p className={`text-sm ${message.includes('Invalid') ? 'text-red-500' : 'text-green-500'}`}>
+                    {message}
+                </p>
+            )}
         </div>
     );
 };
