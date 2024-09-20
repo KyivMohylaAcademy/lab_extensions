@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { PublicKey, Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import React, { useState, useRef } from 'react';
+import { PublicKey, Connection, LAMPORTS_PER_SOL, clusterApiUrl } from '@solana/web3.js';
 
 
 const WalletPage: React.FC = () => {
@@ -8,7 +8,8 @@ const WalletPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [balance, setBalance] = useState<number>(0);
     const [selectedAmount, setSelectedAmount] = useState<number>(0);
-   
+    const connection = useRef(new Connection(clusterApiUrl("devnet")));
+
     const handlePublicKeyInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputKey = event.target.value;
         setPublicKeyInput(inputKey);
@@ -24,8 +25,7 @@ const WalletPage: React.FC = () => {
             setWalletAddress(publicKey.toBase58());
             setError(null);
 
-            const connection = new Connection("https://api.devnet.solana.com", "confirmed");
-            const balanceInLamports = await connection.getBalance(publicKey);
+            const balanceInLamports = await connection.current.getBalance(publicKey);
             const balanceInSOL = balanceInLamports / LAMPORTS_PER_SOL;
             setBalance(balanceInSOL);
         } catch (e) {
@@ -40,17 +40,20 @@ const WalletPage: React.FC = () => {
 
         try {
             const publicKey = new PublicKey(publicKeyInput);
-            const connection = new Connection("https://api.devnet.solana.com", "confirmed");
-            const airdropSignature = await connection.requestAirdrop(
+            const airdropSignature = await connection.current.requestAirdrop(
                 publicKey,
                 selectedAmount * LAMPORTS_PER_SOL
-            );
-            console.log(airdropSignature)
+            ).then((id: string) => {
+                console.log(`Transaction ID ${id}`);
+            })
+
+            console.log(`Tx Complete: https://explorer.solana.com/tx/${airdropSignature}?cluster=devnet`)
 
             setBalance(balance + selectedAmount);
 
             alert("Success")
-        } catch {
+        } catch(error) {
+            console.error(error)
             alert("Airdrop failed!")
         }
     };
@@ -75,8 +78,8 @@ const WalletPage: React.FC = () => {
                     <div className="font-semibold w-full mb-4">
                         Current Balance (Solana Devnet): <br /> {balance} SOL
                     </div>
-                    {/* <div className='my-4'>
-                        <label htmlFor="wallet-options" className="mb-2 font-semibold text-blue-700 block">Choose an amount to airdrop to your account (Solana Devnet, max 2 requests per hour):</label>
+                    <div className='my-4'>
+                        <label htmlFor="wallet-options" className="mb-2 font-semibold text-blue-700 block">Choose an amount to airdrop to your account (Solana Devnet, max 1 request per hour...):</label>
                         <select
                             id="wallet-options"
                             className="mb-4 p-2 border border-gray-400"
@@ -92,7 +95,7 @@ const WalletPage: React.FC = () => {
                         <button className='bg-blue-700 text-white font-bold py-2 px-4 rounded' onClick={handleAirdropSOLDevnetClick}>
                             Confirm Airdrop
                         </button>
-                    </div> */}
+                    </div>
                 </>
             )}
 
