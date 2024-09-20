@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@solana/web3.js": "^1.95.3",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
@@ -10,6 +11,7 @@
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "@types/react-router-dom": "^5.3.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.26.2",
@@ -20,7 +22,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "INLINE_RUNTIME_CHUNK=false react-app-rewired build",
+    "build": "cross-env INLINE_RUNTIME_CHUNK=false react-app-rewired build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -45,6 +47,7 @@
   "devDependencies": {
     "@types/webextension-polyfill": "^0.10.0",
     "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
     "customize-cra": "^1.0.0",
     "postcss": "^8.4.47",
     "prettier": "2.8.7",
