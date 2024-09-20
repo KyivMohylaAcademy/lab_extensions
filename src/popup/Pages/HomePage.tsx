@@ -1,4 +1,6 @@
-import React from 'react';
+import { clusterApiUrl, Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import React, { useState } from 'react';
+
 
 const HomePage: React.FC = () => {
     return (
